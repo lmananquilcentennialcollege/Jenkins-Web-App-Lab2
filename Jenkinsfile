@@ -12,14 +12,14 @@ pipeline {
         stage('Build') {
             steps {
                 // Build the Maven Web App
-                sh 'mvn clean package'
+                bat 'mvn clean package'
             }
         }
         
         stage('Test') {
             steps {
                 // Run tests (if you have any)
-                sh 'mvn test'
+                bat 'mvn test'
             }
         }
 
