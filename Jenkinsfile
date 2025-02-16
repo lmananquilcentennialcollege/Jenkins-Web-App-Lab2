@@ -5,7 +5,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Clones your GitHub repo
-                git 'https://github.com/lmananquilcentennialcollege/Jenkins-Web-App-Lab2.git'
+                git branch: 'main', url: 'https://github.com/lmananquilcentennialcollege/Jenkins-Web-App-Lab2.git'
             }
         }
         
