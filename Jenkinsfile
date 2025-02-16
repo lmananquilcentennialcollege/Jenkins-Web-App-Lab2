@@ -1,6 +1,10 @@
 pipeline {
     agent any  // Runs on any available Jenkins agent
 
+    tools {
+        maven 'Maven 3.9.9'  // Use the Maven you configured in Jenkins
+    }
+
     stages {
         stage('Checkout') {
             steps {
