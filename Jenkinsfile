@@ -4,6 +4,10 @@ pipeline {
     tools {
         maven 'Maven 3.9.9'  // Use the Maven you configured in Jenkins
     }
+    environment {
+        DOCKER_HUB_CREDENTIALS = credentials('dockerhub-credentials')
+        IMAGE_NAME = 'jenkins-docker-maven-agile-maven-webapp'
+    }
 
     stages {
         stage('Checkout') {
@@ -26,6 +30,24 @@ pipeline {
                 bat 'mvn test'
             }
         }
+
+        stage('Docker Login') {
+            steps {
+                sh 'docker login -u $DOCKER_HUB_CREDENTIALS_USR -p $DOCKER_HUB_CREDENTIALS_PSW'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t $IMAGE_NAME .'
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                sh 'docker push $IMAGE_NAME'
+            }
+        }        
 
         stage('Deploy') {
             steps {
