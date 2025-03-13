@@ -1,62 +1,52 @@
 pipeline {
-    agent any  // Runs on any available Jenkins agent
-
+    agent any
     tools {
-        maven 'Maven 3.9.9'  // Use the Maven you configured in Jenkins
+        maven 'Maven 3.9.9' 
     }
     environment {
-        DOCKER_HUB_CREDENTIALS = credentials('dockerhub-credentials')
-        IMAGE_NAME = 'jenkins-docker-maven-agile-maven-webapp'
+        DOCKER_HUB_USER = '3centennial1college3'
+        IMAGE_NAME = 'jenkins-docker-maven-agile-lab3'
     }
-
     stages {
         stage('Checkout') {
             steps {
-                // Clones your GitHub repo
                 git branch: 'main', url: 'https://github.com/lmananquilcentennialcollege/Jenkins-Web-App-Lab2.git'
             }
         }
-        
-        stage('Build') {
+        stage('Build Maven Project') {
             steps {
-                // Build the Maven Web App
                 bat 'mvn clean package'
             }
         }
-        
         stage('Test') {
             steps {
-                // Run tests (if you have any)
                 bat 'mvn test'
             }
         }
-
-        stage('Docker Login') {
+        stage('Docker Login') {  
             steps {
-                sh 'docker login -u $DOCKER_HUB_CREDENTIALS_USR -p $DOCKER_HUB_CREDENTIALS_PSW'
+                withCredentials([string(credentialsId: 'dockerhub-credentials', variable:  'DOCKER_HUB_PASSWORD')]) {
+                    bat "echo %DOCKER_HUB_PASSWORD% | docker login -u %DOCKER_HUB_USER% --password-stdin"
+                }
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Docker Build') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'
+                bat "docker build -t %DOCKER_HUB_USER%/%IMAGE_NAME% ."
             }
         }
-
-        stage('Push Docker Image') {
+        stage('Docker Push') {
             steps {
-                sh 'docker push $IMAGE_NAME'
+                bat "docker push %DOCKER_HUB_USER%/%IMAGE_NAME%"
             }
-        }        
-
+        }
         stage('Deploy') {
             steps {
-                // Simulate deployment (e.g., copying the .war file)
-                echo 'Deploying the web app...'
+                bat "docker run -d -p 9090:8080 %DOCKER_HUB_USER%/%IMAGE_NAME%"
             }
         }
     }
-    
     post {
         success {
             echo 'Pipeline executed successfully!'
