@@ -4,7 +4,8 @@ pipeline {
         maven 'Maven 3.9.9'
     }
     environment {
-        IMAGE_NAME = 'jenkins-docker-maven-agile-lab3'
+        DOCKER_HUB_USER = '3centennial1college3'
+    	IMAGE_NAME = 'jenkins-docker-maven-agile-lab3'
     }
     stages {
         stage('Checkout') {
@@ -33,17 +34,17 @@ stage('Docker Login') {
 }
         stage('Docker Build') {
             steps {
-                bat "docker build -t %DOCKER_HUB_USER%/%IMAGE_NAME% ."
+                bat "docker build -t %DOCKER_HUB_USER%/%IMAGE_NAME%:latest ."
             }
         }
         stage('Docker Push') {
             steps {
-                bat "docker push %DOCKER_HUB_USER%/%IMAGE_NAME%"
+                bat "docker push %DOCKER_HUB_USER%/%IMAGE_NAME%:latest"
             }
         }
         stage('Deploy') {
             steps {
-                bat "docker run -d -p 9090:8080 %DOCKER_HUB_USER%/%IMAGE_NAME%"
+                bat "docker run -d -p 9090:8080 %DOCKER_HUB_USER%/%IMAGE_NAME%:latest"
             }
         }
     }
