@@ -44,7 +44,7 @@ stage('Docker Login') {
         }
         stage('Deploy') {
             steps {
-                bat "docker run -d -p 8081:8080 %DOCKER_HUB_USER%/%IMAGE_NAME%:latest"
+                bat "docker run -d -p 8082:8080 %DOCKER_HUB_USER%/%IMAGE_NAME%:latest"
             }
         }
     }
